@@ -428,8 +428,8 @@
     <div class="nav-tabs">
         <button class="nav-tab active" onclick="go('order',this)"><span class="tab-icon">🛒</span>Pesanan</button>
         <button class="nav-tab" onclick="go('list',this)"><span class="tab-icon">📋</span>Senarai</button>
-        <button class="nav-tab" onclick="go('sales',this)"><span class="tab-icon">📊</span>Jualan</button>
-        <button class="nav-tab" onclick="go('menu',this)"><span class="tab-icon">📝</span>Menu</button>
+        <button class="nav-tab" onclick="go('sales',this)" id="tabSales"><span class="tab-icon">📊</span>Jualan</button>
+        <button class="nav-tab" onclick="go('menu',this)" id="tabMenu"><span class="tab-icon">📝</span>Menu</button>
         <button class="nav-tab" onclick="go('settings',this)" id="tabSettings"><span class="tab-icon">⚙️</span>Tetapan</button>
     </div>
     
@@ -720,9 +720,26 @@ async function enterApp(){
     document.getElementById('loginScreen').style.display='none';
     document.getElementById('appContainer').classList.add('show');
     document.getElementById('staffBadge').textContent='👤 '+esc(S.staff.name);
+
+    // Reset SEMUA tab visibility dulu (fix: tab kekal hidden bila tukar user)
+    document.getElementById('tabSales').style.display='';
+    document.getElementById('tabMenu').style.display='';
+    document.getElementById('tabSettings').style.display='';
+
+    // Reset active tab ke Pesanan
+    document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+    document.querySelector('.nav-tab[onclick*="order"]').classList.add('active');
+    document.getElementById('tab-order').classList.add('active');
+
     await Promise.all([loadMenu(),loadCount(),loadPaymentInfo()]);
     applyPakejLimits();
-    if(S.staff.role!=='admin') document.getElementById('tabSettings').style.display='none';
+
+    // Sembunyikan tab mengikut role - staff tak nampak Jualan & Tetapan
+    if(S.staff.role !== 'admin'){
+        document.getElementById('tabSales').style.display='none';
+        document.getElementById('tabSettings').style.display='none';
+    }
 }
 function doLogout(){
     if(S.cart.length>0&&!confirm('Ada item dalam troli. Keluar?'))return;
@@ -730,6 +747,10 @@ function doLogout(){
     document.getElementById('appContainer').classList.remove('show');
     document.getElementById('pinInput').value='';
     S.cart=[];
+    // Reset tab visibility supaya bersih untuk login seterusnya
+    document.getElementById('tabSales').style.display='';
+    document.getElementById('tabMenu').style.display='';
+    document.getElementById('tabSettings').style.display='';
 }
 function go(tab,el){
     document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
