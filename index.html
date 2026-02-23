@@ -1493,7 +1493,7 @@ async function init(){
         if(C.PAKEJ==='premium'&&info.brandColor&&info.brandColor!=='#f97316'){document.documentElement.style.setProperty('--primary',info.brandColor);document.documentElement.style.setProperty('--primary-dark',info.brandColor)}
     }else{document.getElementById('loginShopName').innerHTML='⚠️ Gagal sambung<br><span style="font-size:0.75rem;color:var(--danger-dark)">'+esc(info.error||'Periksa URL API')+'</span>'}
     
-    else if(loadSession()){enterApp()}
+    if(loadSession()){enterApp()}
     startDapurAutoRefresh();
 }
 init();
